@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="UISide.SignalManager.SmView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UISide.SignalManager"
+             xmlns:converter="clr-namespace:UISide.SignalManager.Converters"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1000">
+    <UserControl.Resources>
+        <converter:CountToVisibiltyConverter x:Key="CountToVisibilityConverter"/>
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <local:SmViewModel></local:SmViewModel>
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="15*"></RowDefinition>
+            <RowDefinition Height="5*"></RowDefinition>
+            <RowDefinition Height="60*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <syncfusion:Ribbon Grid.Row="0" Background="White"  >
+            <syncfusion:RibbonTab Caption="HOME"  IsChecked="True" Background="White" >
+                <syncfusion:RibbonButton SizeForm="Large" Label="Fetch Data" LargeIcon="../SignalManager/../icons/download_blue.jpg" IconType="Icon"  IconStretch="Fill" Click="RibbonButtonFetchData"/>
+                <syncfusion:RibbonButton SizeForm="Large" Label="Delete" LargeIcon="../SignalManager/../icons/delete.png" IconType="Icon"  IconStretch="Fill" Click="RibbonButton_DeleteSignal"/>
+            </syncfusion:RibbonTab>
+        </syncfusion:Ribbon>
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Label Content="Select Project: "></Label>
+            <ComboBox x:Name="ProjectComboBox"   Grid.Row="1" Width="250" HorizontalAlignment="Left" Margin="1" ></ComboBox>
+        </StackPanel>
+        <syncfusion:SfDataGrid x:Name="SignalData" Grid.Row="2" ItemsSource="{Binding SmData,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Width="Auto" SelectionMode="Multiple">
+        </syncfusion:SfDataGrid>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Visibility="{Binding SignalCount,Converter={StaticResource CountToVisibilityConverter},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+            <Label>Total Signal Count: </Label>
+            <TextBlock  HorizontalAlignment="Left" VerticalAlignment ="Center" Text="{Binding SignalCount,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

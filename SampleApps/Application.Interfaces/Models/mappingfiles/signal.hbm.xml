@@ -1,0 +1,11 @@
+﻿<?xml version = "1.0" encoding = "utf-8" ?>
+<hibernate-mapping xmlns = "urn:nhibernate-mapping-2.2" assembly = "NHibernateDemoApp"
+                   namespace = "NHibernateDemoApp">
+  <class name = "Signal" table="tagmanagement.signals">
+    <id name = "Id" column="id">
+      <generator class = "native"/>
+    </id>
+    <property name = "Name" column="name" sql-type="text" not-null="false"/>
+    <property name = "Attributes" column = "xml_data" sql-type="text" not-null="false"/>
+  </class>
+</hibernate-mapping>
