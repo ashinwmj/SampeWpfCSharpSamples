@@ -11,6 +11,7 @@ namespace FactoryPatterns.Adapter
     /// </summary>
 public class JsonConverter
 {
+        //Adding comments
     private IEnumerable<Manufacturer> _manufacturers;
  
     public JsonConverter(IEnumerable<Manufacturer> manufacturers)
