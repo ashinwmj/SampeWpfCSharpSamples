@@ -1,0 +1,147 @@
+﻿<Window x:Class="SignalManagerRuleConfiguration.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SignalManagerRuleConfiguration"
+        mc:Ignorable="d"
+        Title="RuleEditor">
+    <Window.DataContext>
+        <local:RuleConfigurationViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="Look For..." Margin="5" Grid.Column="0">
+                <DataGrid Name="LookForDatagrid" AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible" ColumnWidth="*" CanUserAddRows="False" IsReadOnly="False" 
+                          SelectionMode="Extended" ItemsSource="{Binding EditingRule.Conditions}" CanUserDeleteRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="+" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Self}}" Width="20"
+                                                Command="{Binding DataContext.AddConditionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"/>
+                                        <Button Content="-" Margin="4,0,0,0" CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Self}}" Width="20"
+                                                Command="{Binding DataContext.RemoveConditionCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridComboBoxColumn Header="And/Or" SelectedItemBinding="{Binding DataContext.LogicalOperator, RelativeSource={RelativeSource Self}}" ItemsSource="{x:Static local:RuleConfigurationViewModel.ConditionOperatorsList}"/>
+                        <DataGridComboBoxColumn Header="DB Field" SelectedItemBinding="{Binding DataContext.AttributeName, RelativeSource={RelativeSource Self}}"  ItemsSource="{x:Static local:RuleConfigurationViewModel.DBFieldLists}"/>
+                        <DataGridComboBoxColumn Header="Operator" SelectedItemBinding="{Binding DataContext.ConditionOperator, RelativeSource={RelativeSource Self}}" ItemsSource="{x:Static local:RuleConfigurationViewModel.Operators}"/>
+                        <DataGridTemplateColumn Width="2*" Header="Value">
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Path=AttributeValue,ValidatesOnExceptions=True,UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Path=AttributeValue, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+
+            <GroupBox Header="Target..." Margin="5" Grid.Column="1">
+                <DataGrid Name="TagetDataGrid" AutoGenerateColumns="False" ItemsSource="{Binding EditingRule.Setters}" VerticalScrollBarVisibility="Visible" ColumnWidth="*"
+                          CanUserAddRows="False" CanUserDeleteRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="+" Command="{Binding DataContext.AddSetterCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" 
+                                                CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Self}}" Width="20"
+/>
+                                        <Button Content="-" Command="{Binding DataContext.RemoveSetterCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}" Margin="4,0,0,0" 
+                                                CommandParameter="{Binding DataContext, RelativeSource={RelativeSource Self}}" Width="20"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridComboBoxColumn Header="DB Field" SelectedItemBinding="{Binding DataContext.AttributeName, RelativeSource={RelativeSource Self}}" ItemsSource="{x:Static local:RuleConfigurationViewModel.DBFieldLists}"/>
+                        <DataGridTemplateColumn Width="2*" Header="Value">
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Path=AttributeValue,ValidatesOnExceptions=True,UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Path=AttributeValue, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Rule Name:" Margin="5"/>
+            <TextBox Grid.Column="1" Text="{Binding EditingRule.Name,UpdateSourceTrigger=PropertyChanged}" MinHeight="25" MinWidth="100" Margin="5"/>
+            <Button Grid.Column="2" Content="Save/Update" MinHeight="24" MinWidth="65" Command="{Binding AddUpdateCommand}" Margin="5"/>
+        </Grid>
+        <GroupBox Header="Define Rules" Grid.Row="2" Margin="5">
+            <DataGrid AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible" ColumnWidth="*" 
+                          ItemsSource="{Binding Rules,UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single" SelectionUnit="FullRow"
+                      CanUserDeleteRows="False" CanUserAddRows="False"
+                      SelectedItem="{Binding SelectedRule}" >
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="Auto">
+                        <DataGridTemplateColumn.Header>
+                            <CheckBox IsChecked="False"></CheckBox>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate >
+                            <DataTemplate>
+                                <CheckBox IsChecked="False"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Description}"/>
+                    <DataGridTemplateColumn  Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="x" Width="20" Command="{Binding DataContext.DeleteRuleCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+        <Grid  Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+                <Button Grid.Column="1" Content="Apply" Margin="5" FontSize="12" Width="80" 
+                        Command="{Binding DataContext.AddtoDBCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}"/>
+                <Button Grid.Column="2" Content="Import" Margin="5" FontSize="12" Width="80"
+                        Command="{Binding ImportCommand}"/>
+                <Button Grid.Column="3" Content="Export" Margin="5" FontSize="12" Width="80"/>
+        </Grid>
+    </Grid>
+</Window>
